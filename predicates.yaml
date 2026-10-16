@@ -1,0 +1,230 @@
+same_cabinet:
+  name: same_cabinet
+  args:
+  - {name: collection, type: 'Signal[]'}
+  returns: Bool
+  description: True if all signals in collection are assigned to the same Cabinet.
+  category: relational
+same_cioc:
+  name: same_cioc
+  args:
+  - {name: collection, type: 'Signal[]'}
+  returns: Bool
+  description: True if all signals in collection are assigned to the same CIOC.
+  category: relational
+same_baseplate:
+  name: same_baseplate
+  args:
+  - {name: collection, type: 'Signal[]'}
+  returns: Bool
+  description: True if all signals in collection are assigned to the same Baseplate.
+  category: relational
+same_charm:
+  name: same_charm
+  args:
+  - {name: a, type: Signal}
+  - {name: b, type: Signal}
+  returns: Bool
+  description: True if signals a and b occupy the same CHARM.
+  category: relational
+adjacent:
+  name: adjacent
+  args:
+  - {name: a, type: Signal}
+  - {name: b, type: Signal}
+  returns: Bool
+  description: True if signals a and b are placed in adjacent slots.
+  category: relational
+distance:
+  name: distance
+  args:
+  - {name: a, type: Signal}
+  - {name: b, type: Signal}
+  returns: Int
+  description: Slot distance between signals a and b.
+  category: relational
+shares_cable:
+  name: shares_cable
+  args:
+  - {name: a, type: Signal}
+  - {name: b, type: Signal}
+  returns: Bool
+  description: True if signals a and b belong to the same cable.
+  category: relational
+shares_group:
+  name: shares_group
+  args:
+  - {name: a, type: Signal}
+  - {name: b, type: Signal}
+  returns: Bool
+  description: True if signals a and b belong to the same group.
+  category: relational
+free_slots:
+  name: free_slots
+  args:
+  - {name: scope, type: Entity}
+  returns: Int
+  description: Number of unassigned CHARM slots within scope.
+  category: capacity
+used_slots:
+  name: used_slots
+  args:
+  - {name: scope, type: Entity}
+  returns: Int
+  description: Number of assigned CHARM slots within scope.
+  category: capacity
+fill_percent:
+  name: fill_percent
+  args:
+  - {name: scope, type: Entity}
+  returns: Float
+  description: Percentage of slots utilized within scope.
+  category: capacity
+spare_percent:
+  name: spare_percent
+  args:
+  - {name: scope, type: Entity}
+  returns: Float
+  description: Percentage of spare capacity remaining within scope.
+  category: capacity
+contiguous:
+  name: contiguous
+  args:
+  - {name: collection, type: 'Signal[]'}
+  - {name: order, type: String}
+  returns: Bool
+  description: True if collection of signals are placed in contiguous slots.
+  category: contiguity
+consecutive:
+  name: consecutive
+  args:
+  - {name: collection, type: 'Signal[]'}
+  returns: Bool
+  description: True if signals are placed in consecutive slots.
+  category: contiguity
+ordered_by:
+  name: ordered_by
+  args:
+  - {name: collection, type: 'Signal[]'}
+  - {name: field, type: String}
+  - {name: order, type: String}
+  returns: Bool
+  description: True if signals are ordered by field according to order.
+  category: contiguity
+pair_index:
+  name: pair_index
+  args:
+  - {name: pair, type: Pair}
+  returns: Int
+  description: 1-based index of the pair in its cable.
+  category: cable_pair
+cable_size:
+  name: cable_size
+  args:
+  - {name: cable, type: Cable}
+  returns: CableSize
+  description: Total number of pairs in cable.
+  category: cable_pair
+wired_spare:
+  name: wired_spare
+  args:
+  - {name: pair, type: Pair}
+  returns: Bool
+  description: True if pair is designated as a wired spare.
+  category: cable_pair
+orphan_pair:
+  name: orphan_pair
+  args:
+  - {name: pair, type: Pair}
+  returns: Bool
+  description: True if pair has no assigned signal and is not a wired spare.
+  category: cable_pair
+charm_for:
+  name: charm_for
+  args:
+  - {name: io_type, type: IoType}
+  returns: CharmType
+  description: Returns recommended CHARM type for given IO type.
+  category: hardware
+tb_for:
+  name: tb_for
+  args:
+  - {name: io_type, type: IoType}
+  returns: TbType
+  description: Returns recommended Terminal Block type for given IO type.
+  category: hardware
+compatible:
+  name: compatible
+  args:
+  - {name: charm, type: CharmType}
+  - {name: tb, type: TbType}
+  returns: Bool
+  description: True if CHARM type and TB type are hardware-compatible.
+  category: hardware
+mixable:
+  name: mixable
+  args:
+  - {name: charm_a, type: CharmType}
+  - {name: charm_b, type: CharmType}
+  returns: Bool
+  description: True if two CHARM types can reside on the same baseplate.
+  category: hardware
+matches_pattern:
+  name: matches_pattern
+  args:
+  - {name: name, type: String}
+  - {name: pattern, type: String}
+  returns: Bool
+  description: True if string matches regex pattern.
+  category: naming
+format:
+  name: format
+  args:
+  - {name: pattern, type: String}
+  - {name: args, type: Any}
+  returns: String
+  description: Formats pattern with arguments.
+  category: naming
+changed_since:
+  name: changed_since
+  args:
+  - {name: rev, type: Rev}
+  returns: Bool
+  description: True if entity was modified after specified revision.
+  category: revision
+added_in:
+  name: added_in
+  args:
+  - {name: rev, type: Rev}
+  returns: Bool
+  description: True if entity was introduced in revision.
+  category: revision
+deleted_in:
+  name: deleted_in
+  args:
+  - {name: rev, type: Rev}
+  returns: Bool
+  description: True if entity was removed in revision.
+  category: revision
+pinned:
+  name: pinned
+  args:
+  - {name: signal, type: Signal}
+  returns: Bool
+  description: True if signal slot is pinned from previous revision.
+  category: revision
+moved_since:
+  name: moved_since
+  args:
+  - {name: rev, type: Rev}
+  returns: Bool
+  description: True if signal changed slot since revision.
+  category: revision
+custom_adjacent:
+  name: custom_adjacent
+  args:
+  - {name: s1, type: Signal}
+  - {name: s2, type: Signal}
+  returns: Bool
+  description: True if two signals are placed in adjacent slots
+  category: relational

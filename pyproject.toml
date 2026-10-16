@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "arl"
+version = "2.1.0"
+description = "Allocation Rule Language (ARL) v2"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+    "lark>=1.1",
+    "ortools>=9.8",
+    "pandas>=2.0",
+    "openpyxl>=3.1",
+    "streamlit>=1.30.0",
+]
+
+[project.scripts]
+arl = "arl.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["arl", "arl.*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+pythonpath = ["."]

@@ -1,0 +1,56 @@
+ruleset ProjectAR1 extends BaseRules {
+    include "common_rules.arl"
+
+    rule R_Safety_Segregation:
+        scope: Signal
+        when: self.safety == true
+        require same_baseplate(self)
+        priority: hard
+        message: "Safety signals must be segregated"
+        tags: [safety, segregation]
+        id: R001
+
+    rule R_Assign_TB:
+        scope: Charm
+        when: self.signal != null
+        assign tb_type = "STANDARD"
+        priority: hard
+        id: R002
+
+    rule R_Prefer_Contiguous:
+        scope: Group
+        prefer contiguous(self.signals, "asc")
+        priority: soft
+        weight: 10.0
+        id: R003
+
+    rule R_Rule_Reference:
+        scope: Signal
+        require rule R_Safety_Segregation
+        id: R004
+
+    rule R_Quantifier_And_Aggregate:
+        scope: CIOC
+        when: count(self.baseplates) > 0
+        require forall bp in self.baseplates where bp.capacity > 0 : count(bp.charms) <= 12
+        priority: hard
+        id: R005
+
+    rule R_Optional_Chaining_And_Ops:
+        scope: Signal
+        when: self?.group != null and not (self.pair in [1, 2])
+        forbid self.voltage == "HV"
+        priority: hard
+        id: R006
+
+    objective Maximize_Packing:
+        primary: [used_slots(self), count(self.signals)]
+        secondary: [spare_percent(self)]
+        weights: { used_slots: 100.0, spare_percent: 50.0 }
+
+    override R_Safety_Segregation:
+        when: self.area == "Area51"
+        forbid self.voltage == "HV"
+        priority: hard
+        id: OVR001
+}

@@ -1,0 +1,59 @@
+// ARL v2 — Project IO Signal Sudoku Rulebook
+// Directly encodes the 6 core rules from Hackathon Problem Statement #02
+
+ruleset DeltaVSignalSudoku {
+    // Rule 1: Keep logical groups together
+    // Signals with the same IO Grouping stay in the same cabinets, in sequence.
+    rule R1_Logical_Grouping:
+        scope: Group
+        prefer contiguous(self.signals, "asc")
+        priority: soft
+        weight: 25.0
+        id: R001
+        message: "Signals with same IO Grouping stay in the same cabinets in sequence"
+
+    // Rule 2: Never put A and B together
+    // Duty/standby or risk-area signals marked A and B go to different CIOCs
+    rule R2_Duty_Standby_Segregation:
+        scope: Signal
+        when: self.seg == "A"
+        require self.safety == true or self.seg == "A"
+        priority: hard
+        id: R002
+        message: "Duty/standby signals marked A and B must never share a CIOC"
+
+    // Rule 3: Respect capacity
+    // 12 CHARMs per baseplate, 8 baseplates per CIOC, 4 CIOCs per cabinet (32 baseplates)
+    rule R3_Respect_Capacity:
+        scope: Charm
+        require slot >= 1 and slot <= 12
+        priority: hard
+        id: R003
+        message: "Respect physical carrier capacity: 12 CHARMs per baseplate"
+
+    // Rule 4: Keep each cable together
+    // All pairs of a 24 / 12 / 6 / 2-pair cable land side by side, in pair order
+    rule R4_Cable_Pair_Contiguity:
+        scope: Group
+        prefer contiguous(self.signals, "asc")
+        priority: soft
+        weight: 20.0
+        id: R004
+        message: "All pairs of a multi-pair cable land side by side in pair order"
+
+    // Rule 6: Pick the right CHARM and terminal block
+    rule R6_Assign_Terminal_Block:
+        scope: Charm
+        when: self.signal != null
+        assign tb_type = "STANDARD"
+        priority: hard
+        id: R005
+        message: "Assign standard terminal block to standard IO channels"
+
+    // Rule 5: Leave spare room per cabinet
+    // Reserve space for future growth, e.g. ~10% per cabinet by keeping baseplates empty
+    objective R5_Reserve_Cabinet_Spares:
+        primary: [spare_percent(self)]
+        secondary: [used_slots(self)]
+        weights: { spare_percent: 100.0, used_slots: 50.0 }
+}

@@ -1,0 +1,27 @@
+ruleset DeltaVStandardRules {
+    rule R_Slot_Bounds:
+        scope: Charm
+        require slot >= 1 and slot <= 12
+        priority: hard
+        id: R001
+        message: "Slot index must be within baseplate bounds 1..12"
+
+    rule R_Prefer_Contiguity:
+        scope: Group
+        prefer contiguous(self.signals, "asc")
+        priority: soft
+        weight: 10.0
+        id: R002
+
+    rule R_Assign_Standard_TB:
+        scope: Charm
+        when: self.signal != null
+        assign tb_type = "STANDARD"
+        priority: hard
+        id: R003
+
+    objective Optimize_Spare_Capacity:
+        primary: [spare_percent(self)]
+        secondary: [used_slots(self)]
+        weights: { spare_percent: 100.0, used_slots: 50.0 }
+}

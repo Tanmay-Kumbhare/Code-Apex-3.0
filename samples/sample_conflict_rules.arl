@@ -1,0 +1,15 @@
+ruleset DeltaVConflictRules {
+    rule R_Constraint_Low:
+        scope: Charm
+        require slot <= 0
+        priority: hard
+        id: R001
+        message: "Invalid slot domain"
+
+    rule R_Constraint_High:
+        scope: Charm
+        require slot >= 1
+        priority: hard
+        id: R002
+        message: "Conflicting slot domain"
+}

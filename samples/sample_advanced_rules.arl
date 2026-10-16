@@ -1,0 +1,35 @@
+ruleset DeltaVAdvancedPlantRules {
+    rule R_Baseplate_Slot_Limit:
+        scope: Charm
+        require slot >= 1 and slot <= 12
+        priority: hard
+        id: R001
+        message: "Slots must stay within physical carrier bounds 1..12"
+
+    rule R_Channel_A_Segregation:
+        scope: Signal
+        when: self.seg == "A"
+        require cioc.seg_role == "A_ONLY" or cioc.seg_role == "MIXED"
+        priority: hard
+        id: R002
+        message: "Segment A signals must be allocated to Seg A or Mixed CIOC"
+
+    rule R_Group_Contiguity:
+        scope: Group
+        prefer contiguous(self.signals, "asc")
+        priority: soft
+        weight: 15.0
+        id: R003
+
+    rule R_Standard_Terminal_Block:
+        scope: Charm
+        when: self.signal != null
+        assign tb_type = "STANDARD"
+        priority: hard
+        id: R004
+
+    objective Minimize_Wired_Spares:
+        primary: [used_slots(self)]
+        secondary: [spare_percent(self)]
+        weights: { used_slots: 100.0, spare_percent: 25.0 }
+}

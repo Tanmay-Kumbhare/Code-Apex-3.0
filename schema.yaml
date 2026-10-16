@@ -1,0 +1,129 @@
+version: 2.1.0
+domain_types:
+- Area
+- BaseplateId
+- CabinetId
+- CabinetRef
+- CableId
+- CableRef
+- CiocId
+- CiocRef
+- GroupId
+- GroupRef
+- JBId
+- Rev
+- SignalRef
+- Slot
+- Tag
+- Unit
+enums:
+  IoType:
+  - AI
+  - AO
+  - DI
+  - DO
+  - DO_SOV
+  - DO_HORN
+  - DO_BEACON
+  - DO_SOUNDER
+  - DO_RELAY
+  CableSize:
+  - 2
+  - 6
+  - 12
+  - 24
+  Seg:
+  - A
+  - B
+  CharmType:
+  - AI
+  - AO
+  - DI
+  - HIGH_SIDE_DO
+  - ISOLATED_DO
+  - SPARE
+  TbType:
+  - STANDARD
+  - FUSED_INJECTED_POWER
+  - RELAY_OUTPUT
+  SegRole:
+  - A_ONLY
+  - B_ONLY
+  - MIXED
+  VoltageClass:
+  - LV
+  - MV
+  - HV
+  RedundancyKind:
+  - NONE
+  - DUAL
+  - TMR
+entities:
+  Signal:
+    fields:
+      tag: Tag
+      io_type: IoType
+      cable: CableRef
+      pair: Int
+      group: GroupRef?
+      seg: Seg?
+      voltage: VoltageClass?
+      safety: Bool
+      redundant: RedundancyKind?
+      area: Area?
+      unit: Unit?
+      revision_added: Rev?
+      revision_deleted: Rev?
+  Cable:
+    fields:
+      id: CableId
+      size: CableSize
+      pairs: Pair[]
+      from: JBId?
+  Pair:
+    fields:
+      cable: CableRef
+      index: Int
+      signal: SignalRef?
+      wired_spare: Bool
+  Group:
+    fields:
+      id: GroupId
+      signals: Signal[]
+      cables: Cable[]
+  Baseplate:
+    fields:
+      id: BaseplateId
+      cioc: CiocRef
+      index: Int
+      charms: Charm[]
+      capacity: Int = 12
+  Charm:
+    fields:
+      slot: Int
+      signal: SignalRef?
+      charm_type: CharmType?
+      tb_type: TbType?
+  CIOC:
+    fields:
+      id: CiocId
+      cabinet: CabinetRef
+      index: Int
+      baseplates: Baseplate[]
+      capacity: Int = 8
+      seg_role: SegRole
+  Cabinet:
+    fields:
+      id: CabinetId
+      area: Area
+      unit: Unit
+      seq: Int
+      ciocs: CIOC[]
+      capacity: Int = 4
+      spare_target_percent: Float = 10.0
+  Project:
+    fields:
+      cabinets: Cabinet[]
+      cables: Cable[]
+      groups: Group[]
+      signals: Signal[]
